@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>カート - ユーザーシステム</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../admin/static/h-ui/css/H-ui.min.css" />
+  <link rel="stylesheet" href="../admin/static/h-ui.admin/css/style.css" />
+  <link rel="stylesheet" href="../admin/lib/Hui-iconfont/1.0.8/iconfont.css" />
+  <style>
+    .web-box {
+      width: 900px;
+      margin: 80px auto;
+      padding: 30px;
+      box-shadow: 0 0 10px #ddd;
+      border-radius: 10px;
+      background-color: #fff;
+    }
+    .title {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      text-align: center;
+    }
+    img {
+      width: 60px;
+    }
+    .total {
+      text-align: right;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    .btn-checkout {
+      text-align: right;
+      margin-top: 10px;
+    }
+    .btn-delete {
+      color: white;
+      background-color: #d9534f;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn-delete:hover {
+      background-color: #c9302c;
+    }
+    .btn-update {
+      color: white;
+      background-color: #5bc0de;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      margin-left: 5px;
+      cursor: pointer;
+    }
+    .btn-update:hover {
+      background-color: #31b0d5;
+    }
+    input[type="number"] {
+      width: 60px;
+      padding: 4px;
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script>
+  $(function () {
+    // 获取购物车数据
+    $.ajax({
+      url: './get_cart.php',
+      type: 'GET',
+      dataType: 'json',
+      success: function (cartItems) {
+        let total = 0;
+        cartItems.forEach(item => {
+          const itemTotal = item.price * item.quantity;
+          total += itemTotal;
+
+          $('#cart-body').append(`
+            <tr id="row-${item.product_id}">
+              <td><img src="${item.image_url}" alt="商品画像"></td>
+              <td>${item.name}</td>
+              <td>¥${item.price.toFixed(2)}</td>
+              <td>
+                <input type="number" min="1" value="${item.quantity}" id="qty-${item.product_id}">
+              </td>
+              <td id="subtotal-${item.product_id}">¥${itemTotal.toFixed(2)}</td>
+              <td>
+                <button class="btn-delete" data-product-id="${item.product_id}">削除</button>
+                <button class="btn-update" data-product-id="${item.product_id}" data-price="${item.price}">更新</button>
+              </td>
+            </tr>
+          `);
+        });
+        $('#cart-total').text(`合計金額：¥${total.toFixed(2)}`);
+      },
+      error: function () {
+        alert('カート情報の取得に失敗しました。');
+      }
+    });
+
+    // 删除商品
+    $(document).on('click', '.btn-delete', function () {
+      const productId = $(this).data('product-id');
+      removeFromCart(productId);
+    });
+
+    // 更新商品数量
+    $(document).on('click', '.btn-update', function () {
+      const productId = $(this).data('product-id');
+      const price = parseFloat($(this).data('price'));
+      const newQty = parseInt($(`#qty-${productId}`).val());
+
+      if (newQty < 1) {
+        alert('数量は1以上にしてください。');
+        return;
+      }
+      updateCart(productId, newQty, price);
+    });
+
+    // 提交订单
+    $('#checout').on('click',function() {
+      $.post('./subimt_order.php',function (res) {
+        if(res.error) {
+          alert("エラー：" + res.error);
+        }else if (res.status === "success"){
+          alert("注文が完了しました！");
+          location.href  = 'order_success.html';
+        }else{
+          alert("予期しないエラーが発生しました。");
+        }
+      }, 'json');
+    })
+
+
+  });
+
+  // 删除商品
+  function removeFromCart(productId) {
+    $.ajax({
+      url: 'delete_from_cart.php',
+      type: 'POST',
+      data: { product_id: productId },
+      success: function(response) {
+        const res = JSON.parse(response);
+        alert(res.message);
+        if (res.status === "success") {
+          $(`#row-${productId}`).remove();
+          recalculateTotal();
+        }
+      },
+      error: function() {
+        alert('削除に失敗しました。');
+      }
+    });
+  }
+
+  // 更新商品数量
+  function updateCart(productId, newQty, price) {
+    $.ajax({
+      url: 'update_cart.php',
+      type: 'POST',
+      data: { product_id: productId, quantity: newQty },
+      success: function(response) {
+        const res = JSON.parse(response);
+        alert(res.message);
+        if (res.status === "success") {
+          const newSubtotal = newQty * price;
+          $(`#subtotal-${productId}`).text(`¥${newSubtotal.toFixed(2)}`);
+          recalculateTotal();
+        }
+      },
+      error: function() {
+        alert('更新に失敗しました。');
+      }
+    });
+  }
+
+  // 重新计算合计金额
+  function recalculateTotal() {
+    let total = 0;
+    $('#cart-body tr').each(function () {
+      const subtotalText = $(this).find('td:nth-child(5)').text();
+      const subtotal = parseFloat(subtotalText.replace(/[^\d.]/g, '')) || 0;
+      total += subtotal;
+    });
+    $('#cart-total').text(`合計金額：¥${total.toFixed(2)}`);
+  }
+  </script>
+</head>
+
+<body>
+  <div class="web-box">
+    <h3 class="title">🛒 あなたのショッピングカート</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>商品画像</th>
+          <th>商品名</th>
+          <th>価格</th>
+          <th>数量</th>
+          <th>小計</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="cart-body">
+        <!-- JavaScript插入购物车项 -->
+      </tbody>
+    </table>
+    <div class="total" id="cart-total">合計金額：¥0</div>
+    <div class="btn-checkout">
+      <button class="btn btn-success radius" id="checkout">✅ 注文を確定する</button>
+    </div>
+  </div>
+</body>
+</html>

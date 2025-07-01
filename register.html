@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>新規登録 - ユーザーシステム</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="admin/static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" href="admin/static/h-ui.admin/css/style.css" />
+    <link rel="stylesheet" href="admin/lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <style>
+        .web-box {
+            width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            box-shadow: 0 0 10px #ddd;
+            border-radius: 10px;
+        }
+        .title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+        $(function(){
+            // Ajax button click
+            $('#register').on('click',function(){
+                $.ajax({
+                    url:'./register.php',
+                    type:'POST',
+                    data:{
+                        'email':$('#reg_email').val(),
+                        'username': $('#reg_user').val(),
+                        'password':$('#reg_pass').val()
+                    },
+                    success: function (data) {
+                        if (data.trim() === 'success'){
+                            alert("登録成功！ログインページへ移動します。");
+                            window.location.href = "./login.html";
+                        } else {
+                            alert("登録失敗: " + data);
+                        }
+                    },
+                    error: function () {
+                        alert("サーバーエラーが発生しました。");
+                    }
+                })
+            });
+        });
+
+    </script>
+</head>
+<body>
+<div class="web-box">
+    <h3 class="title">アカウント新規登録</h3>
+    <form id="register-form" class="form form-horizontal">
+        <div class="row cl">
+            <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60d;</i></label>
+            <div class="formControls col-xs-8">
+                <input name="email" type="email" class="input-text" placeholder="メールアドレス" id="reg_email">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60d;</i></label>
+            <div class="formControls col-xs-8">
+                <input name="email" type="text" class="input-text" placeholder="ユーザー名" id="reg_user">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60e;</i></label>
+            <div class="formControls col-xs-8">
+                <input name="password" type="password" class="input-text" placeholder="パスワード" id="reg_pass">
+            </div>
+        </div>
+        <div class="row cl" style="margin-top:15px;">
+            <div class="formControls col-xs-8 col-xs-offset-3">
+                <button class="btn btn-success radius" type="submit" id="register">登録</button>
+                <a href="login.html" style="margin-left: 10px;">戻る</a>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
+

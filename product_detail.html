@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>商品詳細</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- UI 框架样式 -->
+  <link rel="stylesheet" href="../admin/static/h-ui/css/H-ui.min.css" />
+  <link rel="stylesheet" href="../admin/static/h-ui.admin/css/style.css" />
+  <link rel="stylesheet" href="../admin/lib/Hui-iconfont/1.0.8/iconfont.css" />
+
+ <style>
+    .product-detail {
+      max-width: 800px;
+      margin: 100px auto;
+      padding: 20px;
+      background-color: #fff;
+      border: 1px solid #eee;
+      border-radius: 10px;
+    }
+    .product-detail img {
+      width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      margin-bottom: 20px;
+    }
+    .product-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .product-price {
+      font-size: 20px;
+      color: #e4393c;
+      margin-bottom: 10px;
+    }
+    .product-description {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .add-cart-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #18a689;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .add-cart-btn:hover {
+      background-color: #14806b;
+    }
+  </style>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+  <script>
+    function getQueryParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    $(function() {
+      const productId = getQueryParam("id");
+      if (!productId) {
+        $("body").html("<p>商品IDが見つかりません。</p>");
+        return;
+      }
+
+      $.ajax({
+        url: "./get_product_detail.php",
+        type: "GET",
+        data: { id: productId },
+        dataType: "json",
+        success: function(product) {
+          if (product.error) {
+            $("body").html(`<p>${product.error}</p>`);
+            return;
+          }
+
+          const imagePath = product.image_url.replace(/^images\//, "images/");
+          const detailHtml = `
+            <div class="product-detail">
+              <img src="${imagePath}" alt="${product.name}">
+              <div class="product-name">${product.name}</div>
+              <div class="product-price">￥${product.price}</div>
+              <div class="product-description">${product.description}</div>
+              <button class="add-cart-btn" id="add-to-cart">カートに追加</button>
+            </div>
+          `;
+          $("body").html(detailHtml);
+
+          // 绑定点击事件
+          $(document).on("click","#add-to-cart",function(){
+            $.ajax({
+              url: "./add_to_cart.php",
+              type: "POST",
+              data: {
+                id: productId,
+                name: product.name,
+                price: product.price,
+                quantity: 1,
+                image_url: product.image_url
+              },
+              success: function (res){
+                alert("カートに追加しました！");
+                window.location.href = "cart.html"
+              },
+              error: function() {
+                 alert("カート追加に失敗しました。");
+              }
+            })
+          })
+
+        },
+        error: function() {
+          $("body").html("<p>商品情報の取得に失敗しました。</p>");
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+</body>
+</html>
