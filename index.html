@@ -103,36 +103,46 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script>
-    $(function(){
+    $(function () {
+      var isLoggedIn = false;
+
+      // 拦截除首页和注册页以外的所有链接点击事件
+      $("body").on("click", "a", function (e) {
+        const href = $(this).attr("href");
+        if (!isLoggedIn && href !== "index.html" && href !== "register.html") {
+          e.preventDefault();
+          alert("先に登録してください。");
+        }
+      });
+
       // 动态加载推荐商品
       $.ajax({
-  url: "./get_recommend_products.php",
-  type: "GET",
-  dataType: "json",
-  success: function(response) {
-    if (response.status === "success" && Array.isArray(response.data)) {
-      let html = '';
-      response.data.forEach(p => {
-        html += `
-          <div class="product-card">
-            <a href="product_detail.html?id=${p.id}">
-              <img src="${p.image_url}" alt="${p.name}">
-            </a>
-            <div class="name">${p.name}</div>
-            <div class="price">￥${p.price}</div>
-          </div>
-        `;
+        url: "./get_recommend_products.php",
+        type: "GET",
+        dataType: "json",
+        success: function (response) {
+          if (response.status === "success" && Array.isArray(response.data)) {
+            let html = '';
+            response.data.forEach(p => {
+              html += `
+                <div class="product-card">
+                  <a href="product_detail.html?id=${p.id}">
+                    <img src="${p.image_url}" alt="${p.name}">
+                  </a>
+                  <div class="name">${p.name}</div>
+                  <div class="price">￥${p.price}</div>
+                </div>
+              `;
+            });
+            $("#recommend-section").html(html);
+          } else {
+            $("#recommend-section").html("<p>おすすめ商品の取得に失敗しました。</p>");
+          }
+        },
+        error: function () {
+          $("#recommend-section").html("<p>おすすめ商品の取得に失敗しました。</p>");
+        }
       });
-      $("#recommend-section").html(html);
-    } else {
-      $("#recommend-section").html("<p>おすすめ商品の取得に失敗しました。</p>");
-    }
-  },
-  error: function() {
-    $("#recommend-section").html("<p>おすすめ商品の取得に失敗しました。</p>");
-  }
-});
-
     });
   </script>
 </head>
