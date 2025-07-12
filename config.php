@@ -1,7 +1,7 @@
 <?php
 // config.php
 
-define('DB_HOST', 'localhost');
+define('DB_HOST', '127.0.0.1');
 define('DB_USER', 'mini_user');
 define('DB_PASS', 'ab960204');
 define('DB_NAME', 'mini_shop');
