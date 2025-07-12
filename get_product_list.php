@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-$con = mysqli_connect("localhost", "root", "ab960204", "mini_shop");
+$con = mysqli_connect("localhost", "mini_user", "password123", "mini_shop");
 
 if (mysqli_connect_errno()) {
     echo "データベースに接続できません";

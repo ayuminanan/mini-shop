@@ -14,7 +14,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 // 3. 连接数据库
-$con = new mysqli("localhost", "root", "ab960204", "mini_shop");
+$con = new mysqli("localhost", "mini_user", "password123", "mini_shop");
 if ($con->connect_error) {
     echo json_encode(["error" => "db_connect_error"]);
     exit;
