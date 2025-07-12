@@ -18,7 +18,11 @@ if (!$product_id || !$product_name || !$product_price) {
 }
 
 // 连接数据库
-require_once 'config.php';
+$con = new mysqli("localhost", "root", "ab960204", "mini_shop");
+if ($con->connect_error) {
+    echo json_encode(["status" => "error", "message" => "数据库连接失败: " . $con->connect_error]);
+    exit;
+}
 
 // 检查购物车中是否已有该商品
 $checkStmt = $con->prepare("SELECT quantity FROM cart WHERE user_id = ? AND product_id = ?");

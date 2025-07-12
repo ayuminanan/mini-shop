@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+$con = mysqli_connect("localhost", "root", "ab960204", "mini_shop");
 
 if(!$con){
     echo json_encode(["error" => "データベース接続失敗"]);

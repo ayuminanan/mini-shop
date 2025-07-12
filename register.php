@@ -5,7 +5,7 @@ $email = $_POST['email'];
 $username = $_POST['username'];
 $password = $_POST['password'];
 
-require_once 'config.php';
+$con = mysqli_connect("localhost", "root", "ab960204", "mini_shop");
 
 if (mysqli_connect_errno()) {
     echo "データベースに接続できません";
