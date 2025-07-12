@@ -13,12 +13,7 @@ if (!isset($_SESSION['id'])) {
 $user_email = $_SESSION['id'];
 
 // 数据库连接
-$con = mysqli_connect("localhost", "mini_user", "password123", "mini_shop");
-if (!$con) {
-    echo json_encode(["error" => "db_connect_error"]);
-    exit;
-}
-mysqli_set_charset($con, "utf8");
+require_once 'config.php';
 
 // 1. 获取购物车内容
 $cart_sql = "SELECT product_id, product_name, product_price, quantity FROM cart WHERE user_id = ?";

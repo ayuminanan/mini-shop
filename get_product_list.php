@@ -1,12 +1,7 @@
 <?php
 session_start();
 
-$con = mysqli_connect("localhost", "mini_user", "password123", "mini_shop");
-
-if (mysqli_connect_errno()) {
-    echo "データベースに接続できません";
-    exit();
-}
+require_once 'config.php';
 
 $result = mysqli_query($con, "SELECT * FROM products");
 

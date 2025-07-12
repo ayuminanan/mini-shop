@@ -23,11 +23,7 @@ if(!$product_id){
 }
 
 // 4.数据库连接
-$con = mysqli_connect("localhost", "mini_user", "password123", "mini_shop");
-if(!$con){
-    echo json_encode(["error" => "db_connect_error"]);
-    exit; 
-}
+require_once 'config.php';
 
 $stmt = mysqli_prepare($con, "DELETE FROM cart WHERE user_id = ? AND product_id = ?");
 mysqli_stmt_bind_param($stmt,"si",$user_email,$product_id);

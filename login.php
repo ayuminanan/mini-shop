@@ -4,11 +4,7 @@ session_start();
 $email = $_POST['email'];
 $password = $_POST['password'];
 
-$con = mysqli_connect("localhost", "mini_user", "password123", "mini_shop");
-if (mysqli_connect_errno()) {
-    echo "DB接続エラー";
-    exit;
-}
+require_once 'config.php';
 
 // 验证用户是否存在
 $res = mysqli_query($con, "select * from users where email='$email' and password='$password'");
