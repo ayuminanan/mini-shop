@@ -1,5 +1,5 @@
 <?php
-$con = mysqli_connect("localhost", "mini_user", "password123", "mini_shop");
+$con = mysqli_connect("127.0.0.1", "mini_user", "password123", "mini_shop");
 
 if(!$con){
     echo json_encode(["error" => "データベース接続失敗"]);
