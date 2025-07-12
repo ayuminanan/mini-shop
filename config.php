@@ -1,15 +1,12 @@
 <?php
-// config.php
+define('DB_HOST', 'hopper.proxy.rlwy.net');
+define('DB_USER', 'root');
+define('DB_PASS', 'xIOSANZNTFGLAuaXXesijWQsbLiDiTmO');
+define('DB_NAME', 'railway');
+define('DB_PORT', 21728);
 
-define('DB_HOST', '192.168.4.128');
-define('DB_USER', 'mini_user');
-define('DB_PASS', 'ab960204');
-define('DB_NAME', 'mini_shop');
+$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
 
-// 连接数据库
-$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-
-// 检查连接
 if ($conn->connect_error) {
     die("连接失败: " . $conn->connect_error);
 }
