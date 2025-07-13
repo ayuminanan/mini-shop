@@ -1,17 +1,16 @@
 <?php
-// config.php - 自动判断使用本地还是 Railway 连接
+// config.php
 
-$use_local = true; // 设置为 false 使用 Railway
+define('DB_HOST', 'hopper.proxy.rlwy.net'); // RAILWAY_TCP_PROXY_DOMAIN 的值
+define('DB_PORT', 21728);                   // RAILWAY_TCP_PROXY_PORT 的值（需查看 Railway 控制台的 Connect 页）
+define('DB_USER', 'root');
+define('DB_PASS', 'xIOSANZNTFGLAuaXXesijWQsbLiDiTmO');
+define('DB_NAME', 'mini_shop');
 
-if ($use_local) {
-    $con = new mysqli("localhost", "root", "ab960204", "mini_shop");
-} else {
-    $con = new mysqli("hopper.proxy.rlwy.net", "root", "xIOSANZNTFGLAuaXXesijWQsbLiDiTmO", "mini_shop", 21728);
-}
+$con = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
 
 // 检查连接
 if ($con->connect_error) {
-    echo json_encode(["status" => "error", "message" => "数据库连接失败: " . $con->connect_error]);
-    exit;
+    die("连接失败: " . $con->connect_error);
 }
 ?>
