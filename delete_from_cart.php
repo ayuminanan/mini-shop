@@ -1,5 +1,8 @@
 <?php
 
+// 数据库连接
+require_once 'config.php';
+
 session_start();
 
 $_SESSION['user_id'] = 1;
@@ -13,13 +16,6 @@ $product_id = $_POST['product_id'] ?? null;
 // 参数检查
 if (!$product_id) {
     echo json_encode(["status" => "error", "message" => "缺少 product_id 参数"]);
-    exit;
-}
-
-// 数据库连接
-$con = new mysqli("localhost", "root", "ab960204", "mini_shop");
-if ($con->connect_error) {
-    echo json_encode(["status" => "error", "message" => "数据库连接失败: " . $con->connect_error]);
     exit;
 }
 

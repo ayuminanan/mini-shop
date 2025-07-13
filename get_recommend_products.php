@@ -1,12 +1,8 @@
 <?php
 session_start();
 
-// 连接数据库
-$con = new mysqli("127.0.0.1", "root", "ab960204", "mini_shop");
-if($con->connect_error){
-    echo json_encode(["status" => "error", "message" => "数据库连接失败: " . $con->connect_error]);
-    exit;
-}
+// 数据库连接
+require_once 'config.php';
 
 // 查询推荐商品(最多6个)
 $sql = "SELECT id, name, price, description, image_url 

@@ -1,12 +1,8 @@
 <?php
 session_start();
 
-$con = mysqli_connect("localhost", "root", "ab960204", "mini_shop");
-
-if (mysqli_connect_errno()) {
-    echo "データベースに接続できません";
-    exit();
-}
+// 数据库连接
+require_once 'config.php';
 
 $result = mysqli_query($con, "SELECT * FROM products");
 

@@ -5,11 +5,8 @@ $email = $_POST['email'];
 $username = $_POST['username'];
 $password = $_POST['password'];
 
-$con = mysqli_connect("localhost", "root", "ab960204", "mini_shop");
-
-if (mysqli_connect_errno()) {
-    echo "データベースに接続できません";
-}
+// 数据库连接
+require_once 'config.php';
 
 // 检查是否已经注册
 $res = mysqli_query($con, "SELECT email FROM users WHERE email='$email'");

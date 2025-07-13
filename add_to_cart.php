@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+// 数据库连接
+require_once 'config.php';
+
 // 获取用户 ID（实际项目中应判断用户是否已登录）
 $user_id = $_SESSION['user_id'] ?? 1;
 
@@ -14,13 +17,6 @@ $image_url = $_POST['image_url'] ?? null;
 // 参数检查
 if (!$product_id || !$product_name || !$product_price) {
     echo json_encode(["status" => "error", "message" => "缺少必要参数"]);
-    exit;
-}
-
-// 连接数据库
-$con = new mysqli("localhost", "root", "ab960204", "mini_shop");
-if ($con->connect_error) {
-    echo json_encode(["status" => "error", "message" => "数据库连接失败: " . $con->connect_error]);
     exit;
 }
 

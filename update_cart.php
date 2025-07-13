@@ -2,6 +2,9 @@
 
 session_start();
 
+// 数据库连接
+require_once 'config.php';
+
 // 测试用：假设 user_id 从 session 获取
 $_SESSION['user_id'] = 1;
 $user_id = $_SESSION['user_id'] ?? 1;
@@ -13,13 +16,6 @@ $quantity = $_POST['quantity'] ?? null;
 // 参数检查
 if (!$product_id || !$quantity || !is_numeric($quantity) || $quantity <= 0) {
     echo json_encode(["status" => "error", "message" => "無効な product_id または quantity" ]);
-    exit;
-}
-
-// 数据库连接
-$con = new mysqli("localhost", "root", "ab960204", "mini_shop");
-if ($con->connect_error) {
-    echo json_encode(["status" => "error", "message" => "数据库连接失败: " . $con->connect_error]);
     exit;
 }
 

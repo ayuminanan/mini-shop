@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+// 数据库连接
+require_once 'config.php';
+
 // ======= 临时测试用（部署前请删除）=======
 $_SESSION['user_id'] = 1;
 
@@ -12,14 +15,6 @@ if (!isset($_SESSION['user_id'])) {
 
 // 2. 获取用户 ID
 $user_id = $_SESSION['user_id'];
-
-// 3. 连接数据库
-$con = new mysqli("localhost", "root", "ab960204", "mini_shop");
-if ($con->connect_error) {
-    echo json_encode(["error" => "db_connect_error"]);
-    exit;
-}
-$con->set_charset("utf8");
 
 // 4. 查询购物车
 $stmt = $con->prepare("SELECT product_id, product_name, product_price, image_url, quantity FROM cart WHERE user_id = ?");

@@ -1,10 +1,7 @@
 <?php
-$con = mysqli_connect("localhost", "root", "ab960204", "mini_shop");
 
-if(!$con){
-    echo json_encode(["error" => "データベース接続失敗"]);
-    exit();
-}
+// 数据库连接
+require_once 'config.php';
 
 $id = isset($_GET['id']) ? intval($_GET['id']):0;
 

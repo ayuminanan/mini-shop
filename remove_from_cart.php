@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+// 数据库连接
+require_once 'config.php';
+
 // 临时调用
 $_SESSION['id'] = 1;
 
@@ -22,12 +25,6 @@ if(!$product_id){
     exit;
 }
 
-// 4.数据库连接
-$con = mysqli_connect("localhost", "root", "ab960204", "mini_shop");
-if(!$con){
-    echo json_encode(["error" => "db_connect_error"]);
-    exit; 
-}
 
 $stmt = mysqli_prepare($con, "DELETE FROM cart WHERE user_id = ? AND product_id = ?");
 mysqli_stmt_bind_param($stmt,"si",$user_email,$product_id);
