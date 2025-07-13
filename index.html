@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <title>和風商城 - ホーム</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- UI 框架样式 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="../admin/static/h-ui/css/H-ui.min.css" />
   <link rel="stylesheet" href="../admin/static/h-ui.admin/css/style.css" />
   <link rel="stylesheet" href="../admin/lib/Hui-iconfont/1.0.8/iconfont.css" />
@@ -14,20 +12,17 @@
     body {
       background-color: #f5f5f5;
     }
-
     .banner {
       width: 100%;
       max-height: 400px;
       overflow: hidden;
       margin-bottom: 30px;
     }
-
     .banner img {
       width: 100%;
       height: auto;
       display: block;
     }
-
     .slogan {
       text-align: center;
       font-size: 28px;
@@ -35,19 +30,16 @@
       font-weight: bold;
       color: #e4393c;
     }
-
     .product-section {
       max-width: 1000px;
       margin: 40px auto;
     }
-
     .product-grid {
       display: flex;
       flex-wrap: wrap;
       gap: 20px;
       justify-content: center;
     }
-
     .product-card {
       background: white;
       border: 1px solid #ddd;
@@ -56,7 +48,6 @@
       padding: 15px;
       text-align: center;
     }
-
     .product-card img {
       width: 100%;
       height: 160px;
@@ -64,26 +55,22 @@
       border-radius: 5px;
       margin-bottom: 10px;
     }
-
     .product-card .name {
       font-size: 18px;
       font-weight: bold;
       margin: 5px 0;
     }
-
     .product-card .price {
       font-size: 16px;
       color: #e4393c;
       margin: 5px 0;
     }
-
     .category-buttons {
       display: flex;
       justify-content: center;
       gap: 15px;
       margin: 30px 0;
     }
-
     .category-buttons a {
       background-color: #18a689;
       color: white;
@@ -91,7 +78,6 @@
       border-radius: 8px;
       text-decoration: none;
     }
-
     .footer {
       background: #333;
       color: white;
@@ -104,12 +90,27 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script>
     $(function () {
-      var isLoggedIn = false;
+      let isLoggedIn = false;
 
-      // 拦截除首页和注册页以外的所有链接点击事件
+      // 检查是否已登录
+      $.getJSON("check_login.php", function (res) {
+        if (res.logged_in) {
+          isLoggedIn = true;
+          $("#user-info").html("ようこそ, " + res.username + " さん！ <a href='logout.php' style='margin-left:10px; color:#fff;'>ログアウト</a>");
+          $("#register-link").hide();
+          $("#login-link").hide();
+        }
+      });
+
+      // 拦截未登录访问页面链接
       $("body").on("click", "a", function (e) {
         const href = $(this).attr("href");
-        if (!isLoggedIn && href !== "index.html" && href !== "register.html") {
+        if (
+          !isLoggedIn &&
+          href !== "index.html" &&
+          href !== "register.html" &&
+          href !== "login.html"
+        ) {
           e.preventDefault();
           alert("先に登録してください。");
         }
@@ -122,8 +123,8 @@
         dataType: "json",
         success: function (response) {
           if (response.status === "success" && Array.isArray(response.data)) {
-            let html = '';
-            response.data.forEach(p => {
+            let html = "";
+            response.data.forEach((p) => {
               html += `
                 <div class="product-card">
                   <a href="product_detail.html?id=${p.id}">
@@ -148,24 +149,35 @@
 </head>
 
 <body>
-
   <!-- 顶部导航栏 -->
-  <header class="navbar-wrapper">
-    <div class="navbar navbar-fixed-top">
-      <div class="container">
-        <a class="logo navbar-logo" href="index.html">和風商城</a>
-        <nav class="nav navbar-nav">
-          <a href="product_list.html">商品一覧</a>
-          <a href="cart.html">カート</a>
-          <a href="register.html">登録</a>
-        </nav>
+<header class="navbar-wrapper">
+  <div class="navbar navbar-fixed-top">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; height: 60px;">
+      <!-- 左边 LOGO -->
+      <div>
+        <a class="logo navbar-logo" href="index.html" style="font-size: 22px; font-weight: bold; color: black">和風商城</a>
+      </div>
+
+      <!-- 中间导航链接 -->
+      <nav class="nav navbar-nav" style="display: flex; gap: 20px;">
+        <a href="product_list.html">商品一覧</a>
+        <a href="cart.html">カート</a>
+        <a href="register.html" id="register-link">登録</a>
+        <a href="login.html" id="login-link">ログイン</a>
+      </nav>
+
+      <!-- 右边用户信息 -->
+      <div id="user-info" style="color: blue; font-size: 15px;">
+        <!-- 登录后显示：ようこそ, xxx さん！ログアウト -->
       </div>
     </div>
-  </header>
+  </div>
+</header>
+
 
   <!-- 横幅 Banner -->
   <div class="banner">
-    <img src="images/banner.jpg" alt="メインバナー">
+    <img src="images/banner.jpg" alt="メインバナー" />
   </div>
 
   <!-- 标语 -->
@@ -173,7 +185,7 @@
 
   <!-- 推荐商品区域 -->
   <section class="product-section">
-    <h2 style="text-align:center;">おすすめ商品</h2>
+    <h2 style="text-align: center">おすすめ商品</h2>
     <div class="product-grid" id="recommend-section">
       <!-- 动态商品加载 -->
     </div>
@@ -192,6 +204,5 @@
     <p>お問い合わせ：info@example.com | TEL: 012-3456-7890</p>
     <p>&copy; 2025 和風商城 All rights reserved.</p>
   </footer>
-
 </body>
 </html>
