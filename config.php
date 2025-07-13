@@ -7,10 +7,10 @@ define('DB_USER', 'root');
 define('DB_PASS', 'xIOSANZNTFGLAuaXXesijWQsbLiDiTmO');
 define('DB_NAME', 'railway');
 
-$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
+$con = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
 
 // 检查连接
-if ($conn->connect_error) {
-    die("连接失败: " . $conn->connect_error);
+if ($con->connect_error) {
+    die("连接失败: " . $con->connect_error);
 }
 ?>
