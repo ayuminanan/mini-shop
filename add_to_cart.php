@@ -19,7 +19,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once 'config.php';
 
 // 获取用户 ID
-$user_id = $_SESSION['user_id'] ?? 1;
+if (!isset($_SESSION['id'])) {
+    echo json_encode(["status" => "error", "message" => "未登录，无法添加到购物车"]);
+    exit;
+}
+$user_id = $_SESSION['id'];
 
 // 获取 POST 参数
 $product_id   = $_POST['id'] ?? null;
