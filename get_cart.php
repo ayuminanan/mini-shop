@@ -14,7 +14,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
+// ======== 确保 session 跨域一致 ========
+session_set_cookie_params([
+  'lifetime' => 0,
+  'path' => '/',
+  'domain' => 'mini-shop-9y8k.onrender.com',
+  'secure' => true,
+  'httponly' => true,
+  'samesite' => 'Lax'
+]);
 session_start();
+
 require_once 'config.php';
 
 // ======= 登录验证 =======
