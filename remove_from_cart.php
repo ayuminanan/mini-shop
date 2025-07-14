@@ -4,9 +4,6 @@ session_start();
 // 数据库连接
 require_once 'config.php';
 
-// 临时调用
-$_SESSION['id'] = 1;
-
 // 1. 判断是否登录
 if(!isset($_SESSION['id'])) {
     echo json_encode(["error" => "unauthorized"]);

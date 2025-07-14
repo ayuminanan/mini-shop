@@ -1,7 +1,18 @@
 <?php
-// ======== 跨域头部配置（放最前面）========
-header("Access-Control-Allow-Origin: http://localhost:8070/"); // ⚠️ 替换为你的前端地址
-header("Access-Control-Allow-Credentials: true");
+// ======== 跨域头部配置（必须放最前面）========
+$allowed_origin = "https://your-frontend.onrender.com"; 
+if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === $allowed_origin) {
+    header("Access-Control-Allow-Origin: $allowed_origin");
+    header("Access-Control-Allow-Credentials: true");
+}
+
+header("Content-Type: application/json");
+
+// ======== 预检请求处理 ========
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
 session_start();
 require_once 'config.php';

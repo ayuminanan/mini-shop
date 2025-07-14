@@ -1,5 +1,17 @@
 <?php
+// 设置安全的session cookie参数
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'domain' => 'mini-shop-9y8k.onrender.com', 
+    'secure' => true,
+    'httponly' => true,
+    'samesite' => 'Lax' 
+]);
 session_start();
+
+header("Access-Control-Allow-Origin: https://mini-shop-9y8k.onrender.com");
+header("Access-Control-Allow-Credentials: true");
 
 $email = $_POST['email'];
 $username = $_POST['username'];
@@ -7,18 +19,20 @@ $password = $_POST['password'];
 
 require_once 'config.php';
 
-// 查询是否已存在该邮箱
+// 简单SQL注入防护建议用预处理，以下仅示例保持结构
+$email = mysqli_real_escape_string($con, $email);
+$username = mysqli_real_escape_string($con, $username);
+$password = mysqli_real_escape_string($con, $password);
+
 $res = mysqli_query($con, "SELECT * FROM users WHERE email='$email'");
 
 if ($res) {
     $row = mysqli_fetch_assoc($res);
     if ($row != null) {
-        // 邮箱已存在，直接登录
         $_SESSION["id"] = $row['id'];
         $_SESSION["username"] = $row['username'];
-        echo "exists_login";  // 告诉前端用户已存在，已登录
+        echo "exists_login";
     } else {
-        // 新用户，插入数据库
         $insert = mysqli_query($con, "INSERT INTO users (email, username, password) VALUES ('$email','$username','$password')");
         if ($insert) {
             $_SESSION["id"] = mysqli_insert_id($con);

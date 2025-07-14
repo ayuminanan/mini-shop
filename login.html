@@ -26,8 +26,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script type="text/javascript">
       $(function () {
-        // Ajax button click
-        $("#login").on("click", function () {
+        $("#login-form").on("submit", function (e) {
+          e.preventDefault();
+
+          if (!$("#login_email").val() || !$("#login_password").val()) {
+            alert("メールアドレスとパスワードを入力してください");
+            return;
+          }
+
           $.ajax({
             url: "./login.php",
             type: "POST",
@@ -45,6 +51,9 @@
               } else {
                 alert(data);
               }
+            },
+            error: function () {
+              alert("通信エラーが発生しました");
             },
           });
         });

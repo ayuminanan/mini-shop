@@ -1,11 +1,19 @@
 <?php
+session_set_cookie_params([
+  'lifetime' => 0,
+  'path' => '/',
+  'domain' => 'mini-shop-9y8k.onrender.com',
+  'secure' => true,
+  'httponly' => true,
+  'samesite' => 'Lax'
+]);
 session_start();
-header("Access-Control-Allow-Origin: http://localhost:8070/"); // 替换成你的前端地址
+
+header("Access-Control-Allow-Origin: https://mini-shop-9y8k.onrender.com");
 header("Access-Control-Allow-Credentials: true");
+header("Content-Type: text/plain; charset=utf-8");
 
 require_once 'config.php';
-
-// 设置编码，确保兼容中文
 mysqli_set_charset($con, "utf8mb4");
 
 // 获取 POST 数据（加上基本验证）
