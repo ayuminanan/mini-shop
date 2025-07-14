@@ -21,7 +21,7 @@ session_set_cookie_params([
   'domain' => 'mini-shop-9y8k.onrender.com',
   'secure' => true,
   'httponly' => true,
-  'samesite' => 'Lax'
+  'samesite' => 'None'
 ]);
 session_start();
 
