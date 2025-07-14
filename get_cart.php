@@ -1,6 +1,6 @@
 <?php
 // ======== 跨域头部配置（必须放最前面）========
-$allowed_origin = "https://your-frontend.onrender.com"; 
+$allowed_origin = "https://mini-shop-9y8k.onrender.com"; 
 if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === $allowed_origin) {
     header("Access-Control-Allow-Origin: $allowed_origin");
     header("Access-Control-Allow-Credentials: true");
