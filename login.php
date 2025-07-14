@@ -1,5 +1,7 @@
 <?php
 session_start();
+header("Access-Control-Allow-Origin: http://localhost:8070/"); // 替换成你的前端地址
+header("Access-Control-Allow-Credentials: true");
 
 require_once 'config.php';
 

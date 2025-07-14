@@ -96,9 +96,19 @@
       $.getJSON("check_login.php", function (res) {
         if (res.logged_in) {
           isLoggedIn = true;
-          $("#user-info").html("ようこそ, " + res.username + " さん！ <a href='logout.php' style='margin-left:10px; color:#fff;'>ログアウト</a>");
+          $("#user-info").html(
+            `ようこそ, ${res.username} さん！ ` +
+            `<button id="logout-btn" style="margin-left:10px; background:#d9534f; border:none; color:#fff; padding:4px 10px; border-radius:4px; cursor:pointer;">ログアウト</button>`
+          );
           $("#register-link").hide();
           $("#login-link").hide();
+        }
+      });
+
+      // 退出按钮点击事件
+      $("body").on("click", "#logout-btn", function () {
+        if (confirm("本当にログアウトしますか？")) {
+          window.location.href = "logout.php";
         }
       });
 
@@ -168,12 +178,11 @@
 
       <!-- 右边用户信息 -->
       <div id="user-info" style="color: blue; font-size: 15px;">
-        <!-- 登录后显示：ようこそ, xxx さん！ログアウト -->
+        <!-- 登录后显示：ようこそ, xxx さん！ -->
       </div>
     </div>
   </div>
 </header>
-
 
   <!-- 横幅 Banner -->
   <div class="banner">

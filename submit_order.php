@@ -1,66 +1,85 @@
 <?php
+header("Content-Type: application/json");
 session_start();
-
-// 数据库连接
 require_once 'config.php';
 
-// 临时调试用（正式环境请删除）
-$_SESSION['id'] = 1;
-
 if (!isset($_SESSION['id'])) {
-    echo json_encode(["error" => "unauthorized"]);
+    echo json_encode(["error" => "未登录"]);
     exit;
 }
 
-$user_email = $_SESSION['id'];
+$user_id = $_SESSION['id'];
 
-
-// 1. 获取购物车内容
-$cart_sql = "SELECT product_id, product_name, product_price, quantity FROM cart WHERE user_id = ?";
-$stmt = mysqli_prepare($con, $cart_sql);
-mysqli_stmt_bind_param($stmt, "s", $user_email);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
+// 获取购物车
+$cart_sql = "SELECT product_id, product_price, quantity FROM cart WHERE user_id = ?";
+$stmt = $con->prepare($cart_sql);
+if (!$stmt) {
+    echo json_encode(["error" => "购物车查询失败", "mysql_error" => $con->error]);
+    exit;
+}
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
 $items = [];
-while ($row = mysqli_fetch_assoc($result)) {
+$total = 0;
+while ($row = $result->fetch_assoc()) {
     $items[] = $row;
+    $total += $row['product_price'] * $row['quantity'];
 }
-mysqli_stmt_close($stmt);
+$stmt->close();
 
 if (empty($items)) {
-    echo json_encode(["error" => "cart_empty"]);
-    mysqli_close($con);
+    echo json_encode(["error" => "购物车为空"]);
+    $con->close();
     exit;
 }
 
-// 2. 插入订单表
-$order_sql = "INSERT INTO orders (user_id, order_date) VALUES (?, NOW())";
-$stmt = mysqli_prepare($con, $order_sql);
-mysqli_stmt_bind_param($stmt, "s", $user_email);
-mysqli_stmt_execute($stmt);
-$order_id = mysqli_insert_id($con);
-mysqli_stmt_close($stmt);
-
-// 3. 插入订单明细
-$order_item_sql = "INSERT INTO order_items (order_id, product_id, product_name, quantity, price) VALUES (?, ?, ?, ?, ?)";
-$stmt = mysqli_prepare($con, $order_item_sql);
-
-foreach ($items as $item) {
-    mysqli_stmt_bind_param($stmt, "iisid", $order_id, $item['product_id'], $item['product_name'], $item['quantity'], $item['product_price']);
-    mysqli_stmt_execute($stmt);
+// 插入订单主表
+$order_sql = "INSERT INTO orders (user_id, total) VALUES (?, ?)";
+$stmt = $con->prepare($order_sql);
+if (!$stmt) {
+    echo json_encode(["error" => "订单插入失败", "mysql_error" => $con->error]);
+    $con->close();
+    exit;
 }
-mysqli_stmt_close($stmt);
+$stmt->bind_param("id", $user_id, $total);
+if (!$stmt->execute()) {
+    echo json_encode(["error" => "订单插入失败", "mysql_error" => $stmt->error]);
+    $stmt->close();
+    $con->close();
+    exit;
+}
+$order_id = $con->insert_id;
+$stmt->close();
 
-// 4. 清空购物车
+// 插入订单明细（不含 product_name）
+$order_item_sql = "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
+$stmt = $con->prepare($order_item_sql);
+if (!$stmt) {
+    echo json_encode(["error" => "订单明细插入失败", "mysql_error" => $con->error]);
+    $con->close();
+    exit;
+}
+foreach ($items as $item) {
+    $stmt->bind_param("iiid", $order_id, $item['product_id'], $item['quantity'], $item['product_price']);
+    if (!$stmt->execute()) {
+        echo json_encode(["error" => "订单明细插入失败", "mysql_error" => $stmt->error]);
+        $stmt->close();
+        $con->close();
+        exit;
+    }
+}
+$stmt->close();
+
+// 清空购物车
 $clear_sql = "DELETE FROM cart WHERE user_id = ?";
-$stmt = mysqli_prepare($con, $clear_sql);
-mysqli_stmt_bind_param($stmt, "s", $user_email);
-mysqli_stmt_execute($stmt);
-mysqli_stmt_close($stmt);
+$stmt = $con->prepare($clear_sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$stmt->close();
 
-mysqli_close($con);
-
-// 5. 返回成功
+// 返回成功
+$con->close();
 echo json_encode(["success" => true, "order_id" => $order_id]);
 ?>

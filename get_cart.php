@@ -1,28 +1,25 @@
 <?php
-session_start();
+// ======== 跨域头部配置（放最前面）========
+header("Access-Control-Allow-Origin: http://localhost:8070/"); // ⚠️ 替换为你的前端地址
+header("Access-Control-Allow-Credentials: true");
 
-// 数据库连接
+session_start();
 require_once 'config.php';
 
-// ======= 临时测试用（部署前请删除）=======
-$_SESSION['user_id'] = 1;
-
-// 1. 检查是否已登录
-if (!isset($_SESSION['user_id'])) {
+// ======= 登录验证 =======
+if (!isset($_SESSION['id'])) {
     echo json_encode(["error" => "unauthorized"]);
     exit;
 }
 
-// 2. 获取用户 ID
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['id'];
 
-// 4. 查询购物车
+// ======= 查询购物车 =======
 $stmt = $con->prepare("SELECT product_id, product_name, product_price, image_url, quantity FROM cart WHERE user_id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// 5. 构建 JSON 返回值
 $cart = [];
 while ($row = $result->fetch_assoc()) {
     $cart[] = [
