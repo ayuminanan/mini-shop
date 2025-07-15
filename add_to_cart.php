@@ -1,20 +1,6 @@
 <?php
 session_start();
 
-// === 添加跨域头（放最前面） ===
-header("Access-Control-Allow-Origin: https://mini-shop-frontend.onrender.com"); // 替换为你的前端部署地址
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-
-// === 处理预检请求（OPTIONS）===
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-
-// === 正式业务逻辑开始 ===
-
 // 数据库连接
 require_once 'config.php';
 
@@ -26,8 +12,8 @@ if (!isset($_SESSION['id'])) {
 $user_id = $_SESSION['id'];
 
 // 获取 POST 参数
-$product_id   = $_POST['id'] ?? null;
-$product_name = $_POST['name'] ?? null;
+$product_id   = $_POST['id'];
+$product_name = $_POST['name'];
 $product_price = $_POST['price'] ?? null;
 $quantity     = $_POST['quantity'] ?? 1;
 $image_url    = $_POST['image_url'] ?? null;

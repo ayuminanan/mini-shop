@@ -1,14 +1,4 @@
 <?php
-// === 跨域支持设置 ===
-header("Access-Control-Allow-Origin: https://mini-shop-frontend.onrender.com"); // ← 替换为你前端的实际地址
-header("Access-Control-Allow-Credentials: true");
-header("Content-Type: application/json");
-
-// 预检请求直接返回
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
 
 // 数据库连接
 require_once 'config.php';

@@ -1,36 +1,7 @@
 <?php
-// ======== 跨域头部配置（必须放最前面）========
-$allowed_origin = "https://mini-shop-9y8k.onrender.com"; 
-if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === $allowed_origin) {
-    header("Access-Control-Allow-Origin: $allowed_origin");
-    header("Access-Control-Allow-Credentials: true");
-}
-
-header("Content-Type: application/json");
-
-// ======== 预检请求处理 ========
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-
-// ======== 确保 session 跨域一致 ========
-session_set_cookie_params([
-  'lifetime' => 0,
-  'path' => '/',
-  'domain' => 'mini-shop-9y8k.onrender.com',
-  'secure' => true,
-  'httponly' => true,
-  'samesite' => 'None'
-]);
 session_start();
 
 require_once 'config.php';
-
-// 调试：输出请求来源和session信息
-error_log("HTTP_ORIGIN: " . ($_SERVER['HTTP_ORIGIN'] ?? 'null'));
-error_log("Session ID: " . session_id());
-error_log("Session Data: " . print_r($_SESSION, true));
 
 // ======= 登录验证 =======
 if (!isset($_SESSION['id'])) {

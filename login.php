@@ -1,17 +1,5 @@
 <?php
-session_set_cookie_params([
-  'lifetime' => 0,
-  'path' => '/',
-  'domain' => 'mini-shop-9y8k.onrender.com',
-  'secure' => true,
-  'httponly' => true,
-  'samesite' => 'None'
-]);
 session_start();
-
-header("Access-Control-Allow-Origin: https://mini-shop-9y8k.onrender.com");
-header("Access-Control-Allow-Credentials: true");
-header("Content-Type: text/plain; charset=utf-8");
 
 require_once 'config.php';
 mysqli_set_charset($con, "utf8mb4");
