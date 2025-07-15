@@ -11,7 +11,6 @@ $sql = "SELECT id, name, price, description, image_url
         ORDER BY is_recommended ASC 
         LIMIT 6";
 $result = $con->query($sql);
-
 $products = [];
 
 if($result && $result->num_rows > 0){
